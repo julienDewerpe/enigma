@@ -142,6 +142,37 @@ Rotor.prototype.turnover = function() {
     }
 };
 
+//création des Rotors
+var RotorI = function() {
+    var rotor = new Rotor('ZENVDCLPSIAUKFWQRXMTYOGHBJ');
+    rotor.setTurnoverLetter('R');
+    return rotor;
+};
+
+var RotorII = function() {
+    var rotor = new Rotor('IFGWEVZRMLTPNHSQCABOKJXDYU');
+    rotor.setTurnoverLetter('R');
+    return rotor;
+};
+
+var RotorIII = function() {
+    var rotor = new Rotor('CSNMIZAJKLRXHQDEFWPTUYOBVG');
+    rotor.setTurnoverLetter('R');
+    return rotor;
+};
+
+var RotorIV = function() {
+    var rotor = new Rotor('ADWMBJUQGOSKFITNYLERZCHPXV');
+    rotor.setTurnoverLetter('R');
+    return rotor;
+};
+
+var RotorV = function() {
+    var rotor = new Rotor('UFPHEAYRSWJTMZNVBLCQXIKGDO');
+    rotor.setTurnoverLetter('R');
+    return rotor;
+};
+
 //Création des reflectors
 var Reflector = function() {
     this.reflectionTable = {};
