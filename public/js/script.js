@@ -1,3 +1,4 @@
+//Fonctions de vérification
 var isValidInput = function(input){
     return /^[a-zA-Z]*$/g.test(input);
 }
@@ -14,6 +15,7 @@ var isValidPlugboardConfig = function(input, current){
     return (isAlphabeticChar(input) && isDifferentChar(current));
 }
 
+//récupérer la configuration du plugboard
 var getPlugboardConfig = function() {
     var pairs = $('.plugboard').map(function() {
         thisLetter = $(this).attr('id').slice(-1);
@@ -27,6 +29,7 @@ var getPlugboardConfig = function() {
     return pairs;
 }
 
+//affichage dynamique de la configuration du plu
 $('.plug-settings').keydown(function(e) {
     e.preventDefault();
 
@@ -59,6 +62,8 @@ $('.plug-settings').keydown(function(e) {
     updateOutput();
 });
 
+
+//Récuperer la chaine de caractères + autoriser que les lettres et les espaces
 $('#input').keyup(function(e) {
     input = $(this).val();
     validInput = input.replace(/([^a-zA-Z\s]+)/gi, '').toUpperCase();
@@ -66,6 +71,7 @@ $('#input').keyup(function(e) {
     updateOutput();
 });
 
+//fonction pour ecrire dans un input 
 var updateOutput = function() {
     $('#output').val($('#input').val());
 }

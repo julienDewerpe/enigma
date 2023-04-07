@@ -1,16 +1,19 @@
 var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 //Configuration du PlugBoard dela machine
+//Object : PlugBoard
 var Plugboard = function() {
     this.plugs = {};
     Plugboard.prototype.addPlugs.apply(this, arguments);
 };
 
+//Fonction Plugboard.addPlug :
 Plugboard.prototype.addPlug = function(letter1, letter2) {
     this.plugs[letter1] = letter2;
     this.plugs[letter2] = letter1;
 };
 
+//Fonction Plugboard.addPlugs :
 Plugboard.prototype.addPlugs = function() {
     for (var i = 0; i < arguments.length; i++) {
         var letters = arguments[i];
@@ -18,13 +21,15 @@ Plugboard.prototype.addPlugs = function() {
     }
 };
 
+//function Plugboard.encode :
 Plugboard.prototype.encode = function(letter) {
     if (letter in this.plugs)
         return this.plugs[letter];
     return letter;
 };
 
-//Configuration de l'object rotor
+//Configuration des des Rotors
+//Création de l'objet Rotor
 var Rotor = function(wiringTable) {
     this.wires = {};
     this.inverseWires = {};
@@ -135,4 +140,145 @@ Rotor.prototype.turnover = function() {
             this.nextRotor.step();
         this.turnoverCountdown = 26;
     }
+};
+
+//Création des reflectors
+var Reflector = function() {
+    this.reflectionTable = {};
+
+    for (var i = 0; i < LETTERS.length; i++)
+        this.reflectionTable[LETTERS[i]] = LETTERS[i];
+};
+
+Reflector.prototype.setReflectionTable = function(reflectionTable) {
+    newReflectionTable = {};
+
+    for (var i = 0; i < LETTERS.length; i++) {
+        input = LETTERS[i];
+        output = reflectionTable[i];
+        newReflectionTable[input] = output;
+    }
+
+    this.reflectionTable = newReflectionTable;
+};
+
+Reflector.prototype.encode = function(letter) {
+    return this.reflectionTable[letter];
+};
+
+//Configuration de la machine
+var Machine = function() {
+    this.debug = false;
+    this.plugboard = null;
+    this.rotors = null;
+    this.reflector = null;
+};
+
+Machine.prototype.log = function(message) {
+    if (this.debug)
+        console.log(message);
+};
+
+Machine.prototype.setDebug = function(debug) {
+    this.debug = debug;
+};
+
+Machine.prototype.setPlugboard = function(plugboard) {
+    this.plugboard = plugboard;
+
+    this.log('Machine plugboard table');
+    this.log(this.plugboard.plugs);
+    this.log('');
+};
+
+Machine.prototype.setRotors = function(premierRotor, deuxiemeRotor, troisiemeRotor, quatriemeRotor, cinquiemeRotor, sixiemeRotor, septiemeRotor, huitiemeRotor) {
+    this.rotors = [premierRotor, deuxiemeRotor, troisiemeRotor, quatriemeRotor, cinquiemeRotor, sixiemeRotor, septiemeRotor, huitiemeRotor];
+    this.rotors[0].setNextRotor(this.rotors[1]);
+    this.rotors[1].setNextRotor(this.rotors[2]);
+    this.rotors[2].setNextRotor(this.rotors[3]);
+    this.rotors[3].setNextRotor(this.rotors[4]);
+    this.rotors[4].setNextRotor(this.rotors[5]);
+    this.rotors[5].setNextRotor(this.rotors[6]);    
+    this.rotors[6].setNextRotor(this.rotors[7]);
+
+    this.log('Machine rotors table');
+
+    for (var i = 0; i < this.rotors.length; i++) {
+        this.log('Rotor ' + i + ' table');
+        this.log(this.rotors[i].wires);
+        this.log('');
+    }
+};
+
+Machine.prototype.setReflector = function(reflector) {
+    this.reflector = reflector;
+
+    this.log('Machine reflector table');
+    this.log(this.reflector.reflectionTable);
+    this.log('');
+};
+
+Machine.prototype.encode = function(letter) {
+    // Double stepping anomaly
+    // Rotors turns over the rotor on their right as well. This is not noticed
+    // in rotor 0 because it always steps anyway.
+    if (this.rotors[1].turnoverCountdown == 1 &&
+        this.rotors[2].turnoverCountdown == 1) {
+        this.rotors[1].step();
+    }
+
+    // Update rotor position after encoding
+    this.rotors[0].step();
+
+    this.log('Machine encoding');
+
+    this.log('letter: ' + letter);
+
+    var plugboardDirect = this.plugboard.encode(letter);
+    this.log('plugboardDirect: ' + letter + ' -> ' + plugboardDirect);
+
+    var rotorsDirect = this.encodeWithRotors(plugboardDirect);
+
+    var reflectorInverse = this.reflector.encode(rotorsDirect);
+    this.log('reflectorInverse: ' + rotorsDirect + ' -> ' + reflectorInverse);
+
+    var rotorsInverse = this.encodeInverseWithRotors(reflectorInverse);
+
+    var plugboardInverse = this.plugboard.encode(rotorsInverse);
+    this.log('plugboardInverse: ' + rotorsInverse + ' -> ' + plugboardInverse);
+
+    this.log('');
+
+    return plugboardInverse;
+};
+
+Machine.prototype.encodeWithRotors = function(letter) {
+    for (var i = 0; i < this.rotors.length; i++) {
+        output = this.rotors[i].encode(letter);
+        this.log('rotor ' + i + ' direct: ' + letter + ' -> ' + output);
+
+        letter = output;
+    }
+
+    return output;
+};
+
+Machine.prototype.encodeInverseWithRotors = function(letter) {
+    for (var i = this.rotors.length - 1; i >= 0; i--) {
+        output = this.rotors[i].encode(letter, true);
+        this.log('rotor ' + i + ' inverse: ' + letter + ' -> ' + output);
+
+        letter = output;
+    }
+
+    return output;
+};
+
+Machine.prototype.encodeLetters = function(letters) {
+    var result = '';
+
+    for (var i = 0; i < letters.length; i++)
+        result += this.encode(letters[i]);
+
+    return result;
 };
