@@ -17,7 +17,7 @@ var isValidPlugboardConfig = function(input, current){
 
 //récupérer la configuration du plugboard
 var getPlugboardConfig = function() {
-    var pairs = $('.plugboard').map(function() {
+    var pairs = $('.plug-settings').map(function() {
         thisLetter = $(this).attr('id').slice(-1);
         otherLetter = $(this).val().toUpperCase();
 
@@ -29,7 +29,21 @@ var getPlugboardConfig = function() {
     return pairs;
 }
 
-//affichage dynamique de la configuration du plu
+//récuperer la configuration (la position) des rotors
+var getRotorInstance = function(pos) {
+    var type = $('#rotor-type-' + pos).val();
+
+    if (type === 'A')
+        rotor = new RotorA();
+    else if (type === 'B')
+        rotor = new RotorB();
+    else if (type === 'C')
+        rotor = new RotorC();
+
+    return rotor;
+}
+
+//affichage dynamique de la configuration du plugboard
 $('.plug-settings').keydown(function(e) {
     e.preventDefault();
 
@@ -62,16 +76,37 @@ $('.plug-settings').keydown(function(e) {
     updateOutput();
 });
 
+//encode du message
+var encode = function(input) {
+    getPlugboardConfig();
+    console.log(getPlugboardConfig());
+    var machine = new Machine();
+
+    var plugboard = new Plugboard();
+    plugboard.addPlugs.apply(plugboard, getPlugboardConfig());
+    machine.setPlugboard(plugboard);
+
+    var leftRotor = getRotorInstance('left');
+    var middleRotor = getRotorInstance('middle');
+    var rightRotor = getRotorInstance('right');
+
+    machine.setRotors(leftRotor, middleRotor, rightRotor, new RotorI(), new RotorII(), new RotorIII(), new RotorIV(), new RotorV());
+
+    var reflector = new ReflectorConf();
+    machine.setReflector(reflector);
+
+    return machine.encodeLetters(input);
+};
 
 //Récuperer la chaine de caractères + autoriser que les lettres et les espaces
 $('#input').keyup(function(e) {
     input = $(this).val();
-    validInput = input.replace(/([^a-zA-Z\s]+)/gi, '').toUpperCase();
+    validInput = input.replace(/([^a-zA-Z]+)/gi, '').toUpperCase();
     $(this).val(validInput);
     updateOutput();
 });
 
 //fonction pour ecrire dans un input 
 var updateOutput = function() {
-    $('#output').val($('#input').val());
+    $('#output').val(encode($('#input').val()));
 }

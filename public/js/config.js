@@ -1,4 +1,4 @@
-var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 //Configuration du PlugBoard dela machine
 //Object : PlugBoard
@@ -53,8 +53,7 @@ Rotor.prototype.setInitialPosition = function(initialPosition) {
 };
 
 Rotor.prototype.setInnerPosition = function(innerRingPosition) {
-    var numberOfSteps = innerRingPosition.charCodeAt(0) -
-        'A'.charCodeAt(0);
+    var numberOfSteps = innerRingPosition.charCodeAt(0) - 'A'.charCodeAt(0);
 
     for (var i = 0; i < 26 - numberOfSteps; i++) {
         this.stepWires();
@@ -143,6 +142,24 @@ Rotor.prototype.turnover = function() {
 };
 
 //création des Rotors
+var RotorA = function() {
+    var rotor = new Rotor('QAZKBOUJVPDMFSNTRXYEWGHCLI');
+    rotor.setTurnoverLetter('Y');
+    return rotor;
+};
+
+var RotorB = function() {
+    var rotor = new Rotor('ENQWZPFSBOCLGHKTMIYARDXVUJ');
+    rotor.setTurnoverLetter('P');
+    return rotor;
+};
+
+var RotorC = function() {
+    var rotor = new Rotor('AQDHYPZNIRFOGXUWMJLTVKCEBS');
+    rotor.setTurnoverLetter('O');
+    return rotor;
+};
+
 var RotorI = function() {
     var rotor = new Rotor('ZENVDCLPSIAUKFWQRXMTYOGHBJ');
     rotor.setTurnoverLetter('X');
@@ -173,7 +190,7 @@ var RotorV = function() {
     return rotor;
 };
 
-//Création des reflectors
+//Création du reflector
 var Reflector = function() {
     this.reflectionTable = {};
 
@@ -197,12 +214,18 @@ Reflector.prototype.encode = function(letter) {
     return this.reflectionTable[letter];
 };
 
+var ReflectorConf = function() {
+    var reflector = new Reflector();
+    reflector.setReflectionTable('ZYXWVUTSRQPONMLKJIHGFEDCBA');
+    return reflector;
+};
+
 //Configuration de la machine
 var Machine = function() {
-    this.debug = false;
+    //this.debug = false;
     this.plugboard = null;
-    this.rotors = null;
-    this.reflector = null;
+    //this.rotors = null;
+    //this.reflector = null;
 };
 
 Machine.prototype.log = function(message) {
@@ -250,15 +273,11 @@ Machine.prototype.setReflector = function(reflector) {
 };
 
 Machine.prototype.encode = function(letter) {
-    // Double stepping anomaly
-    // Rotors turns over the rotor on their right as well. This is not noticed
-    // in rotor 0 because it always steps anyway.
     if (this.rotors[1].turnoverCountdown == 1 &&
         this.rotors[2].turnoverCountdown == 1) {
         this.rotors[1].step();
     }
 
-    // Update rotor position after encoding
     this.rotors[0].step();
 
     this.log('Machine encoding');
