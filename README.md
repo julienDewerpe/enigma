@@ -15,7 +15,7 @@ La machine Enigma était une machine de chiffrement mécanique utilisée princip
 4. Avant d'utiliser la machine veuillez la paramétrer :
     - Renseignez les pairs du PlugBoard
     - Renseignez les placement des Rotors
-5. Vous pouvez maintenant Encoder votre message.
+5. Vous pouvez maintenant Encoder votre message. (Attention les espaces ne sont pas acceptés)
 6. Pour le décoder, il vous suffit de prendre votre message et de la taper en entrée (veillez a bien avoir les mêmes paramètres)
 
 ## Auteur
