@@ -145,31 +145,31 @@ Rotor.prototype.turnover = function() {
 //création des Rotors
 var RotorI = function() {
     var rotor = new Rotor('ZENVDCLPSIAUKFWQRXMTYOGHBJ');
-    rotor.setTurnoverLetter('R');
+    rotor.setTurnoverLetter('X');
     return rotor;
 };
 
 var RotorII = function() {
     var rotor = new Rotor('IFGWEVZRMLTPNHSQCABOKJXDYU');
-    rotor.setTurnoverLetter('R');
+    rotor.setTurnoverLetter('O');
     return rotor;
 };
 
 var RotorIII = function() {
     var rotor = new Rotor('CSNMIZAJKLRXHQDEFWPTUYOBVG');
-    rotor.setTurnoverLetter('R');
+    rotor.setTurnoverLetter('K');
     return rotor;
 };
 
 var RotorIV = function() {
     var rotor = new Rotor('ADWMBJUQGOSKFITNYLERZCHPXV');
-    rotor.setTurnoverLetter('R');
+    rotor.setTurnoverLetter('J');
     return rotor;
 };
 
 var RotorV = function() {
     var rotor = new Rotor('UFPHEAYRSWJTMZNVBLCQXIKGDO');
-    rotor.setTurnoverLetter('R');
+    rotor.setTurnoverLetter('T');
     return rotor;
 };
 
