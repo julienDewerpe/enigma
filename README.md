@@ -8,7 +8,7 @@ La machine Enigma était une machine de chiffrement mécanique utilisée princip
 - Framework : aucun framework
 - Bootstrap : Bootstrap a été utilisé pour accélerer le développement du front.
 
-## Comment utilisé le projet
+## Comment utiliser le projet
 1. Téléchargez ou clonez le projet depuis GitHub.
 2. Une fois le projet téléchargé, rendez vous dans le repertoir enigma.
 3. Lancer le fichier index.html, le navigateur affichera alors l'interface de la machine Enigma.
