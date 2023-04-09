@@ -12,9 +12,9 @@ La machine Enigma était une machine de chiffrement mécanique utilisée princip
 1. Téléchargez ou clonez le projet depuis GitHub.
 2. Une fois le projet téléchargé, rendez vous dans le repertoir enigma.
 3. Lancer le fichier index.html, le navigateur affichera alors l'interface de la machine Enigma.
-4. Avant d'utiliser la machine veuillez la paramétrer :
+4. Avant d'utiliser la machine veuillez la paramétrer S'il vous plaît (ce n'est pas obligatoire pour qu'elle fonctionne) :
     - Renseignez les pairs du PlugBoard
-    - Renseignez les placement des Rotors
+    - Renseignez le placement des Rotors
 5. Vous pouvez maintenant Encoder votre message. (Attention les espaces ne sont pas acceptés)
 6. Pour le décoder, il vous suffit de prendre votre message et de la taper en entrée (veillez a bien avoir les mêmes paramètres)
 
