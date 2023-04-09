@@ -51,15 +51,12 @@ $('.plug-settings').keydown(function(e) {
     otherLetter = String.fromCharCode(e.keyCode).toUpperCase();
     previousLetter = $(this).attr('previousLetter');
 
-    // Erase any other letter that is currently connected to the
-    // letter we want right now
     if (isAlphabeticChar(otherLetter)) {
         currentOtherLetter = $('#plug-' + otherLetter).val();
         if (currentOtherLetter)
             $('#plug-' + currentOtherLetter).val('');
     }
 
-    // Erasing the letter that we were previously connected to
     if (previousLetter)
         $('#plug-' + previousLetter).val('');
 

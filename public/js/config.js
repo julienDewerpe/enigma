@@ -7,13 +7,13 @@ var Plugboard = function() {
     Plugboard.prototype.addPlugs.apply(this, arguments);
 };
 
-//Fonction Plugboard.addPlug :
+//Fonction Plugboard.addPlug : permet de faire une pair de lettre
 Plugboard.prototype.addPlug = function(letter1, letter2) {
     this.plugs[letter1] = letter2;
     this.plugs[letter2] = letter1;
 };
 
-//Fonction Plugboard.addPlugs :
+//Fonction Plugboard.addPlugs : permet de stocker les pairs de lettre
 Plugboard.prototype.addPlugs = function() {
     for (var i = 0; i < arguments.length; i++) {
         var letters = arguments[i];
@@ -21,7 +21,7 @@ Plugboard.prototype.addPlugs = function() {
     }
 };
 
-//function Plugboard.encode :
+//function Plugboard.encode : échange les lettre en fonction des pairs qui sont définies
 Plugboard.prototype.encode = function(letter) {
     if (letter in this.plugs)
         return this.plugs[letter];
@@ -29,7 +29,7 @@ Plugboard.prototype.encode = function(letter) {
 };
 
 //Configuration des des Rotors
-//Création de l'objet Rotor
+//Création de l'objet Rotor 
 var Rotor = function(wiringTable) {
     this.wires = {};
     this.inverseWires = {};
@@ -41,31 +41,12 @@ var Rotor = function(wiringTable) {
         this.setWiringTable(wiringTable);
 };
 
-Rotor.prototype.setInitialPosition = function(initialPosition) {
-    var letterCode = initialPosition.charCodeAt(0) - 'A'.charCodeAt(0);
-    var nextRotor = this.nextRotor;
-    this.nextRotor = null;
-
-    for (var i = 0; i < letterCode; i++)
-        this.step();
-
-    this.nextRotor = nextRotor;
-};
-
-Rotor.prototype.setInnerPosition = function(innerRingPosition) {
-    var numberOfSteps = innerRingPosition.charCodeAt(0) - 'A'.charCodeAt(0);
-
-    for (var i = 0; i < 26 - numberOfSteps; i++) {
-        this.stepWires();
-        this.updateInverseWires();
-        this.innerRingPosition += 1;
-    }
-};
-
+// setNextRotor : définit le rotor suivant
 Rotor.prototype.setNextRotor = function(rotor) {
     this.nextRotor = rotor;
 };
 
+// setTurnoverLetter : définit la lettre qui entraîne le déclenchement du rotor suivant lorsqu'elle est atteinte
 Rotor.prototype.setTurnoverLetter = function(letter) {
     this.turnoverCountdown = letter.charCodeAt(0) - 'A'.charCodeAt(0);
 
@@ -73,10 +54,12 @@ Rotor.prototype.setTurnoverLetter = function(letter) {
         this.turnoverCountdown = 26;
 };
 
+//addWire : ajoute une permutation de lettre à la liste des permutations du rotor
 Rotor.prototype.addWire = function(letter1, letter2) {
     this.wires[letter1] = letter2;
 };
 
+//setWiringTable : définit la disposition des contacts électriques pour le rotor
 Rotor.prototype.setWiringTable = function(wiringTable) {
     for (var i = 0; i < LETTERS.length; i++) {
         this.wires[LETTERS[i]] = wiringTable[i];
@@ -84,6 +67,7 @@ Rotor.prototype.setWiringTable = function(wiringTable) {
     }
 };
 
+//encode : effectue la permutation de lettre en utilisant la disposition des contacts électriques du rotor
 Rotor.prototype.encode = function(letter, inverse) {
     var letterCode = letter.charCodeAt(0) - 'A'.charCodeAt(0);
 
@@ -102,6 +86,7 @@ Rotor.prototype.encode = function(letter, inverse) {
     }
 };
 
+//step : effectue un pas de rotation du rotor, en tournant l'anneau intérieur, en mettant à jour la liste des permutations et en vérifiant si le déclenchement du rotor suivant doit être effectué
 Rotor.prototype.step = function() {
     this.stepWires();
     this.updateInverseWires();
@@ -109,6 +94,7 @@ Rotor.prototype.step = function() {
     this.innerRingPosition += 1;
 };
 
+//stepWires : permet de déplacer les connexions entre les lettres de l'alphabet 
 Rotor.prototype.stepWires = function() {
     var newWires = {};
     var currentLetter;
@@ -123,6 +109,7 @@ Rotor.prototype.stepWires = function() {
     this.wires = newWires;
 };
 
+//updateInverseWires : Cette méthode est appelée à chaque fois que les fils du rotor sont décalés pour refléter les changements apportés à la correspondance des lettres
 Rotor.prototype.updateInverseWires = function() {
     for (var i = 0; i < LETTERS.length; i++) {
         letter = LETTERS[i];
@@ -131,6 +118,7 @@ Rotor.prototype.updateInverseWires = function() {
     }
 };
 
+//turnover : utilisée pour gérer le déclenchement du rotor suivant
 Rotor.prototype.turnover = function() {
     this.turnoverCountdown -= 1;
 
@@ -198,6 +186,7 @@ var Reflector = function() {
         this.reflectionTable[LETTERS[i]] = LETTERS[i];
 };
 
+//setReflectionTable : permet de configurer le réflecteur avec une nouvelle table de correspondance, en spécifiant une liste de correspondances sous forme d'un tableau de 26 lettres
 Reflector.prototype.setReflectionTable = function(reflectionTable) {
     newReflectionTable = {};
 
@@ -210,6 +199,7 @@ Reflector.prototype.setReflectionTable = function(reflectionTable) {
     this.reflectionTable = newReflectionTable;
 };
 
+//encode : prend une lettre en entrée et renvoie la lettre correspondante selon la table de réflexion en cours 
 Reflector.prototype.encode = function(letter) {
     return this.reflectionTable[letter];
 };
@@ -222,21 +212,24 @@ var ReflectorConf = function() {
 
 //Configuration de la machine
 var Machine = function() {
-    //this.debug = false;
+    this.debug = false;
     this.plugboard = null;
-    //this.rotors = null;
-    //this.reflector = null;
+    this.rotors = null;
+    this.reflector = null;
 };
 
+//log : afficher des messages de débogage à la console
 Machine.prototype.log = function(message) {
     if (this.debug)
         console.log(message);
 };
 
+//setDebug : est utilisée pour activer ou désactiver le mode de débogage
 Machine.prototype.setDebug = function(debug) {
     this.debug = debug;
 };
 
+//setplugboard : définir la table de connexion du plugboard de la machine
 Machine.prototype.setPlugboard = function(plugboard) {
     this.plugboard = plugboard;
 
@@ -245,6 +238,7 @@ Machine.prototype.setPlugboard = function(plugboard) {
     this.log('');
 };
 
+//setRotors : définir les rotors de la machine
 Machine.prototype.setRotors = function(premierRotor, deuxiemeRotor, troisiemeRotor, quatriemeRotor, cinquiemeRotor, sixiemeRotor, septiemeRotor, huitiemeRotor) {
     this.rotors = [premierRotor, deuxiemeRotor, troisiemeRotor, quatriemeRotor, cinquiemeRotor, sixiemeRotor, septiemeRotor, huitiemeRotor];
     this.rotors[0].setNextRotor(this.rotors[1]);
@@ -264,6 +258,7 @@ Machine.prototype.setRotors = function(premierRotor, deuxiemeRotor, troisiemeRot
     }
 };
 
+//setReflector : définir le réflecteur de la machine
 Machine.prototype.setReflector = function(reflector) {
     this.reflector = reflector;
 
@@ -272,9 +267,15 @@ Machine.prototype.setReflector = function(reflector) {
     this.log('');
 };
 
+//encode : encoder une lettre avec la machine
 Machine.prototype.encode = function(letter) {
     if (this.rotors[1].turnoverCountdown == 1 &&
-        this.rotors[2].turnoverCountdown == 1) {
+        this.rotors[2].turnoverCountdown == 1 &&
+        this.rotors[3].turnoverCountdown == 1 &&
+        this.rotors[4].turnoverCountdown == 1 &&
+        this.rotors[5].turnoverCountdown == 1 &&
+        this.rotors[6].turnoverCountdown == 1 &&
+        this.rotors[7].turnoverCountdown == 1){
         this.rotors[1].step();
     }
 
@@ -302,6 +303,7 @@ Machine.prototype.encode = function(letter) {
     return plugboardInverse;
 };
 
+//encodeWithRotors : encoder une lettre avec les rotors de la machine
 Machine.prototype.encodeWithRotors = function(letter) {
     for (var i = 0; i < this.rotors.length; i++) {
         output = this.rotors[i].encode(letter);
@@ -313,6 +315,7 @@ Machine.prototype.encodeWithRotors = function(letter) {
     return output;
 };
 
+//encodeInverseWithRotors : encoder une lettre avec les rotors de la machine, mais dans l'ordre inverse
 Machine.prototype.encodeInverseWithRotors = function(letter) {
     for (var i = this.rotors.length - 1; i >= 0; i--) {
         output = this.rotors[i].encode(letter, true);
@@ -324,6 +327,7 @@ Machine.prototype.encodeInverseWithRotors = function(letter) {
     return output;
 };
 
+//encodeLetters : encoder plusieurs lettres d'un coup
 Machine.prototype.encodeLetters = function(letters) {
     var result = '';
 
