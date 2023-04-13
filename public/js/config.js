@@ -212,7 +212,7 @@ var ReflectorConf = function() {
 
 //Configuration de la machine
 var Machine = function() {
-    this.debug = false;
+    this.debug = true;
     this.plugboard = null;
     this.rotors = null;
     this.reflector = null;
